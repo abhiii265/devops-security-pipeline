@@ -7,7 +7,7 @@ phases:
       - pip install bandit
   build:
     commands:
-      - bandit -r . -lll -f html -o bandit-report.html
-artifacts:
-  files:
-    - bandit-report.html
+      - echo "Starting Bandit SAST scan..."
+      # We removed '-lll' and added '-level HIGH' to be extra strict
+      # We removed the output file temporarily to see the error in the console
+      - bandit -r . --level HIGH --severity HIGH
