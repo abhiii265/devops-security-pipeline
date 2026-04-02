@@ -1,18 +1,24 @@
-# ==========================================
-# DANGER: VULNERABLE CODE FOR TESTING ONLY
-# ==========================================
+#!/usr/bin/env python
+"""Django's command-line utility for administrative tasks."""
 import os
-import hashlib
+import sys
 
-def insecure_testing_functions(user_input):
-    # Vulnerability 1: Hardcoded Secret/Password
-    aws_secret_key = "AKIAIOSFODNN7EXAMPLE_SECRET_KEY"
-    
-    # Vulnerability 2: Shell/Command Injection
-    # (Allowing random user input to run as a system command)
-    os.system("ping " + user_input)
-    
-    # Vulnerability 3: Using a broken, outdated encryption method (MD5)
-    weak_hash = hashlib.md5(b"password123").hexdigest()
-    
-    return aws_secret_key, weak_hash
+
+def main():
+    """Run administrative tasks."""
+    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'secure_app.settings')
+    try:
+        from django.core.management import execute_from_command_line
+    except ImportError as exc:
+        raise ImportError(
+            "Couldn't import Django. Are you sure it's installed and "
+            "available on your PYTHONPATH environment variable? Did you "
+            "forget to activate a virtual environment?"
+        ) from exc
+    execute_from_command_line(sys.argv)
+
+
+if __name__ == '__main__':
+    main()
+# This is a live test
+abhi
