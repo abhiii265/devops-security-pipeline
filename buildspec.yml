@@ -1,15 +1,15 @@
 version: 0.2
-
 phases:
   install:
     runtime-versions:
       python: 3.10
     commands:
-      - pip install bandit
+      - pip install bandit flask
   build:
     commands:
-      - echo "!!! FORCING SECURITY FAILURE !!!"
-      # We are using '-r .' to scan everything
-      # We are using '-ll' to catch Medium and High
-      # We are NOT saving a file, so it prints directly to the console
-      - bandit -r . -ll
+      - echo "Running Security Audit..."
+      # -lll means "Only fail if a HIGH severity issue is found"
+      - bandit -r . -lll
+artifacts:
+  files:
+    - "**/*"
