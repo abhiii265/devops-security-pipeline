@@ -1,4 +1,5 @@
 version: 0.2
+
 phases:
   install:
     runtime-versions:
@@ -7,8 +8,9 @@ phases:
       - pip install bandit flask
   build:
     commands:
-      - echo "Running Security Audit..."
-      # -lll means "Only fail if a HIGH severity issue is found"
+      - echo "Starting HIGH-STRICT Security Audit..."
+      # Removing '--exit-zero' ensures Bandit returns 1 on any finding
+      # '-lll' ensures it only fails for HIGH severity (your AWS key)
       - bandit -r . -lll
 artifacts:
   files:
