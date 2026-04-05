@@ -6,7 +6,7 @@ app = Flask(__name__)
 # --- THE FACULTY DEMO SWITCH ---
 
 # STEP 1: To show "VULNERABLE" (RED BUILD), remove the '#' below:
-ADMIN_PASSWORD = "AKIA_FAKE_AWS_KEY_EXPOSED_12345"
+# ADMIN_PASSWORD = "AKIA_FAKE_AWS_KEY_EXPOSED_12345"
 
 # STEP 2: To show "SAFE" (GREEN BUILD), put the '#' back at the start.
 
