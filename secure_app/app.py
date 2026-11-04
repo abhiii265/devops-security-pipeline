@@ -1,23 +1,25 @@
+import sqlite3
 import os
-from flask import Flask, render_template
 
-app = Flask(__name__)
+# FLAG 1: Hardcoded Secrets (Scanners like TruffleHog or GitLeaks will catch this)
+AWS_ACCESS_KEY_ID = "AKIAIOSFODNN7EXAMPLE"
+AWS_SECRET_ACCESS_KEY = "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"
+DB_PASSWORD = "super_secret_admin_password_123!"
 
-# --- THE FACULTY DEMO SWITCH ---
-
-# STEP 1: To show "VULNERABLE" (RED BUILD), remove the '#' below:
-# ADMIN_PASSWORD = "AKIA_FAKE_AWS_KEY_EXPOSED_12345"
-  
-# STEP 2: To show "SAFE" (GREEN BUILD), cd put the '#' back at the start.
-
-@app.route('/')
-def home():
-    # We use globals().get so the app doesn't crash when password is commented
-    if globals().get('ADMIN_PASSWORD'):
-        return render_template('index.html', vulnerable=True, error="VULNERABILITY: Hardcoded Secret Found!")
+def get_user_data(username):
+    conn = sqlite3.connect('users.db')
+    cursor = conn.cursor()
     
-    return render_template('index.html', vulnerable=False)
+    # FLAG 2: SQL Injection (Scanners like Bandit or SonarQube will catch this)
+    # Taking direct user input and putting it into a database query is highly dangerous
+    query = "SELECT * FROM users WHERE username = '" + username + "'"
+    cursor.execute(query)
+    
+    return cursor.fetchall()
 
-if __name__ == "__main__":
-    # Added '# nosec' here so this line NEVER causes a build failure
-    app.run(host='0.0.0.0', port=8080)  # nosec
+def ping_server(ip_address):
+    # FLAG 3: OS Command Injection
+    # A hacker could pass an IP address like "8.8.8.8; rm -rf /" to delete the server
+    os.system("ping -c 1 " + ip_address)
+
+print("App is running...")
