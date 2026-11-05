@@ -11,10 +11,10 @@
         h1 { color: #1a73e8; margin-bottom: 5px; }
         .student-info { color: #555; font-size: 1.1em; }
         .status-banner { padding: 15px; border-radius: 8px; font-weight: bold; font-size: 1.2em; margin-bottom: 25px; display: flex; align-items: center; }
-        .status-failed { background-color: #ffebee; color: #c62828; border-left: 6px solid #c62828; }
-        .vuln-card { background: #fff9c4; border: 1px solid #fbc02d; padding: 15px; margin-bottom: 15px; border-radius: 5px; }
-        .code-block { background: #272822; color: #f8f8f2; padding: 15px; border-radius: 8px; font-family: monospace; overflow-x: auto; margin-top: 10px; }
-        .badge { background: #c62828; color: white; padding: 4px 8px; border-radius: 4px; font-size: 0.8em; margin-right: 10px; }
+        .status-success { background-color: #e8f5e9; color: #2e7d32; border-left: 6px solid #2e7d32; }
+        .success-card { background: #f1f8e9; border: 1px solid #8bc34a; padding: 15px; margin-bottom: 15px; border-radius: 5px; }
+        .code-block { background: #272822; color: #a6e22e; padding: 15px; border-radius: 8px; font-family: monospace; overflow-x: auto; margin-top: 10px; }
+        .badge { background: #2e7d32; color: white; padding: 4px 8px; border-radius: 4px; font-size: 0.8em; margin-right: 10px; }
     </style>
 </head>
 <body>
@@ -28,33 +28,33 @@
             </div>
         </div>
 
-        <div class="status-banner status-failed">
-            🚨 PIPELINE STATUS: BUILD BLOCKED (Vulnerabilities Detected)
+        <div class="status-banner status-success">
+            ✅ PIPELINE STATUS: BUILD SUCCESSFUL (Zero Vulnerabilities)
         </div>
 
-        <h3>Active Security Triggers (Testing Mode)</h3>
-        <p>The following intentional flaws were pushed to GitHub to demonstrate the pipeline's automated defense capabilities:</p>
+        <h3>Security Scan Results</h3>
+        <p>The updated code has passed all DevSecOps automated security checks (Bandit, Checkov, and Trivy). The application is safely deploying to AWS ECR.</p>
 
-        <div class="vuln-card">
-            <strong><span class="badge">CRITICAL</span> Hardcoded AWS Credentials</strong>
-            <p>The scanner detected exposed access keys that could allow unauthorized cloud access.</p>
+        <div class="success-card">
+            <strong><span class="badge">PASSED</span> AWS Credentials Secured</strong>
+            <p>No hardcoded keys detected. Pipeline is securely using GitHub Secrets for IAM authentication.</p>
         </div>
 
-        <div class="vuln-card">
-            <strong><span class="badge">HIGH</span> SQL Injection Vulnerability</strong>
-            <p>Direct user input is being concatenated into a database query without sanitization.</p>
+        <div class="success-card">
+            <strong><span class="badge">PASSED</span> Database Queries Sanitized</strong>
+            <p>SQL Injection vulnerabilities have been remediated using Django's secure ORM.</p>
         </div>
 
-        <h3>Quarantined Code Snippet:</h3>
+        <h3>Validated Safe Code Snippet:</h3>
         <div class="code-block">
-# The AWS CodeBuild scanner successfully prevented this from deploying:
+# The AWS CodeBuild scanner approved this remediated code:
 
-AWS_ACCESS_KEY_ID = "AKIAIOSFODNN7EXAMPLE"
-AWS_SECRET_ACCESS_KEY = "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"
+import os
 
-def get_user_data(username):
-    query = "SELECT * FROM users WHERE username = '" + username + "'"
-    cursor.execute(query)
+def get_user_data_secure(username):
+    # Safe: Using Django ORM which automatically parameterizes queries
+    # to prevent SQL Injection attacks.
+    return User.objects.filter(username=username)
         </div>
     </div>
 </body>
