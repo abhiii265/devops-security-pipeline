@@ -1,24 +1,16 @@
-
 import os
-from flask import Flask, render_template
 
-app = Flask(__name__)
+# VULNERABILITY 1: Hardcoded AWS Credentials
+# Bandit and the local scanner will flag this immediately
+AWS_ACCESS_KEY_ID = "AKIAIOSFODNN7EXAMPLE"
 
-# --- THE FACULTY DEMO SWITCH ---
+def get_user_data(username):
+    # VULNERABILITY 2: SQL Injection
+    # Taking direct user input and concatenating it into a query
+    query = "SELECT * FROM users WHERE username = '" + username + "'"
+    return query
 
-# STEP 1: To show "VULNERABLE" (RED BUILD), remove the '#' below:
-# ADMIN_PASSWORD = "AKIA_FAKE_AWS_KEY_EXPOSED_12345"
-  
-# STEP 2: To show "SAFE" (GREEN BUILD), cd put the '#' back at the start.
-
-@app.route('/')
-def home():
-    # We use globals().get so the app doesn't crash when password is commented
-    if globals().get('ADMIN_PASSWORD'):
-        return render_template('index.html', vulnerable=True, error="VULNERABILITY: Hardcoded Secret Found!")
-    
-    return render_template('index.html', vulnerable=False)
-
-if __name__ == "__main__":
-    # Added '# nosec' here so this line NEVER causes a build failure
-    app.run(host='0.0.0.0', port=8080)  # nosec
+def ping_server(ip_address):
+    # VULNERABILITY 3: OS Command Injection
+    # Allowing raw system commands to be executed
+    os.system("ping -c 1 " + ip_address)
