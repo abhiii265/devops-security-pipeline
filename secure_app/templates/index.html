@@ -10,11 +10,13 @@
         .header { text-align: center; border-bottom: 2px solid #eee; padding-bottom: 20px; margin-bottom: 20px; }
         h1 { color: #1a73e8; margin-bottom: 5px; }
         .student-info { color: #555; font-size: 1.1em; }
-        .status-banner { padding: 15px; border-radius: 8px; font-weight: bold; font-size: 1.2em; margin-bottom: 25px; display: flex; align-items: center; }
+        .status-banner { padding: 15px; border-radius: 8px; font-weight: bold; font-size: 1.2em; margin-bottom: 25px; }
+        .status-failed { background-color: #ffebee; color: #c62828; border-left: 6px solid #c62828; }
         .status-success { background-color: #e8f5e9; color: #2e7d32; border-left: 6px solid #2e7d32; }
+        .vuln-card { background: #fff9c4; border: 1px solid #fbc02d; padding: 15px; margin-bottom: 15px; border-radius: 5px; }
         .success-card { background: #f1f8e9; border: 1px solid #8bc34a; padding: 15px; margin-bottom: 15px; border-radius: 5px; }
-        .code-block { background: #272822; color: #a6e22e; padding: 15px; border-radius: 8px; font-family: monospace; overflow-x: auto; margin-top: 10px; }
-        .badge { background: #2e7d32; color: white; padding: 4px 8px; border-radius: 4px; font-size: 0.8em; margin-right: 10px; }
+        .badge-red { background: #c62828; color: white; padding: 4px 8px; border-radius: 4px; font-size: 0.8em; margin-right: 10px; }
+        .badge-green { background: #2e7d32; color: white; padding: 4px 8px; border-radius: 4px; font-size: 0.8em; margin-right: 10px; }
     </style>
 </head>
 <body>
@@ -28,34 +30,33 @@
             </div>
         </div>
 
-        <div class="status-banner status-success">
-            ✅ PIPELINE STATUS: BUILD SUCCESSFUL (Zero Vulnerabilities)
-        </div>
+        <!-- DJANGO LOGIC: If the Python scanner says it is safe -->
+        {% if is_secure %}
+            <div class="status-banner status-success">
+                ✅ PIPELINE STATUS: BUILD SUCCESSFUL (Zero Vulnerabilities)
+            </div>
+            <h3>Security Scan Results</h3>
+            <div class="success-card">
+                <strong><span class="badge-green">PASSED</span> Real-Time Source Code Scan</strong>
+                <p>The code in <code>app.py</code> was scanned and no vulnerabilities were detected. The application is safely deploying.</p>
+            </div>
 
-        <h3>Security Scan Results</h3>
-        <p>The updated code has passed all DevSecOps automated security checks (Bandit, Checkov, and Trivy). The application is safely deploying to AWS ECR.</p>
-
-        <div class="success-card">
-            <strong><span class="badge">PASSED</span> AWS Credentials Secured</strong>
-            <p>No hardcoded keys detected. Pipeline is securely using GitHub Secrets for IAM authentication.</p>
-        </div>
-
-        <div class="success-card">
-            <strong><span class="badge">PASSED</span> Database Queries Sanitized</strong>
-            <p>SQL Injection vulnerabilities have been remediated using Django's secure ORM.</p>
-        </div>
-
-        <h3>Validated Safe Code Snippet:</h3>
-        <div class="code-block">
-# The AWS CodeBuild scanner approved this remediated code:
-
-import os
-
-def get_user_data_secure(username):
-    # Safe: Using Django ORM which automatically parameterizes queries
-    # to prevent SQL Injection attacks.
-    return User.objects.filter(username=username)
-        </div>
+        <!-- DJANGO LOGIC: If the Python scanner found vulnerabilities -->
+        {% else %}
+            <div class="status-banner status-failed">
+                🚨 PIPELINE STATUS: BUILD BLOCKED (Vulnerabilities Detected)
+            </div>
+            <h3>Active Security Triggers</h3>
+            <p>The live scanner detected the following intentional flaws inside <code>app.py</code>:</p>
+            
+            <!-- Loop through whatever vulnerabilities the backend found -->
+            {% for vuln in vulnerabilities %}
+            <div class="vuln-card">
+                <strong><span class="badge-red">{{ vuln.severity }}</span> {{ vuln.type }}</strong>
+                <p>{{ vuln.desc }}</p>
+            </div>
+            {% endfor %}
+        {% endif %}
     </div>
 </body>
 </html>
